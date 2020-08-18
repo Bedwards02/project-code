@@ -4,7 +4,7 @@ import sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server = '192.168.56.1'
+server = "192.168.56.1"
 port = 5555
 
 server_ip = socket.gethostbyname(server)
@@ -19,13 +19,13 @@ s.listen(2)
 print("Waiting for a connection")
 
 currentId = "0"
-pos = ["0:50,50", "1:100,100", "2:150,150"]
+pos = ["0:50,50", "1:900,900"]
 
 
 def threaded_client(conn):
     global currentId, pos
     conn.send(str.encode(currentId))
-    currentId = str(int(currentId) + 1)
+    currentId = "1"
     reply = ''
     while True:
         try:
@@ -36,14 +36,17 @@ def threaded_client(conn):
                 break
             else:
                 print("Recieved: " + reply)
-                print(currentId)
                 arr = reply.split(":")
                 id = int(arr[0])
                 pos[id] = reply
 
-                print("Sending: " + str(pos))
+                if id == 0: nid = 1
+                if id == 1: nid = 0
 
-            conn.sendall(str.encode(pos))
+                reply = pos[nid][:]
+                print("Sending: " + reply)
+
+            conn.sendall(str.encode(reply))
         except:
             break
 
